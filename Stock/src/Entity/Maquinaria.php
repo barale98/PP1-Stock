@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\MaquinariaRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MaquinariaRepository::class)]
@@ -18,14 +16,6 @@ class Maquinaria
     #[ORM\Column]
     private ?int $cantidad = null;
 
-    #[ORM\ManyToMany(targetEntity: Receta::class, inversedBy: 'maquinarias')]
-    private Collection $recetas;    
-
-    public function __construct()
-    {
-        $this->recetas = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -36,11 +26,31 @@ class Maquinaria
         return $this->cantidad;
     }
 
-    public function setCantidad(int $cantidad): static
+    public function setCantidad(int $cantidad): self
     {
         $this->cantidad = $cantidad;
-
         return $this;
+    }
+
+    public function addCantidad(int $cantidad): static
+    {
+        $this->cantidad += $cantidad;
+        return $this;
+    }
+
+    public function subtractCantidad(int $cantidad): static
+    {
+        if ($this->cantidad >= $cantidad) {
+            $this->cantidad -= $cantidad;
+        } else {
+            throw new \Exception('No hay suficiente stock para restar');
+        }
+        return $this;
+    }
+
+    public function hasSufficientStock(int $cantidad): bool
+    {
+        return $this->cantidad >= $cantidad;
     }
 
     /**
