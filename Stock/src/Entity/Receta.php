@@ -23,7 +23,7 @@ class Receta
     private ?string $nombre = null;
 
     #[ORM\ManyToOne(inversedBy: 'recetas')]
-    private ?User $usuario = null;
+    private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: Maquinaria::class, mappedBy: 'recetas')]
     private Collection $maquinarias;
@@ -68,12 +68,12 @@ class Receta
 
     public function getUsuario(): ?User
     {
-        return $this->usuario;
+        return $this->user;
     }
 
     public function setUsuario(?User $usuario): static
     {
-        $this->usuario = $usuario;
+        $this->user = $user;
 
         return $this;
     }

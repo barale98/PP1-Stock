@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\MaquinariaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MaquinariaRepository::class)]
@@ -15,6 +16,14 @@ class Maquinaria
 
     #[ORM\Column]
     private ?int $cantidad = null;
+
+    #[ORM\ManyToMany(targetEntity: Receta::class, inversedBy: 'maquinarias')]
+    private Collection $recetas;
+
+    public function __construct()
+    {
+        $this->recetas = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -65,7 +74,7 @@ class Maquinaria
     {
         if (!$this->recetas->contains($receta)) {
             $this->recetas->add($receta);
-            $receta->addMaquinaria($this);
+            $receta->addMaquinaria($this);  // Asegura que la relación sea bidireccional
         }
 
         return $this;
@@ -74,7 +83,7 @@ class Maquinaria
     public function removeReceta(Receta $receta): static
     {
         if ($this->recetas->removeElement($receta)) {
-            $receta->removeMaquinaria($this);
+            $receta->removeMaquinaria($this);  // Remueve la relación también en el otro lado
         }
         return $this;
     }
