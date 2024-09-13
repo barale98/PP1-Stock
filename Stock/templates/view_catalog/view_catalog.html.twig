@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catálogo{% endblock %}
+{% block stylesheets %}<link href="{{ asset('styles/view_catalog.css') }}" rel="stylesheet">{% endblock %}
+{% block body %}
+    <h1>Catálogo</h1>
+    
+    {% if maquinarias is empty %}
+        <p>No hay maquinarias registradas.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Imagen</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for maquinaria in maquinarias %}
+                    <tr>
+                        <td>{{ maquinaria.nombre }}</td>
+                        <td>{{ maquinaria.marca }}</td>
+                        <td>{{ maquinaria.cantidad }}</td>
+                        <td>{{ maquinaria.descripcion }}</td>
+                        <td>
+                            {% if maquinaria.imagen %}
+                                <img src="{{ asset('uploads/images/' ~ maquinaria.imagen) }}" alt="{{ maquinaria.nombre }}" width="100">
+                            {% else %}
+                                <p>No image available</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('maquinaria_edit', {'id': maquinaria.id}) }}" class="btn btn-sm btn-primary">Editar</a>
+                            <form action="{{ path('maquinaria_delete', {'id': maquinaria.id}) }}" method="post" style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maquinaria.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar esta maquinaria?')">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

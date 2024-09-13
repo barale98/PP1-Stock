@@ -17,7 +17,7 @@ class RepuestoController extends AbstractController
     #[Route('/', name: 'repuestos_index', methods: ['GET'])]
     public function index(RepuestosRepository $repuestosRepository): Response
     {
-        return $this->render('repuestos/index.html.twig', [
+        return $this->render('repuestos/add_repuestos.html.twig', [
             'repuestos' => $repuestosRepository->findAll(),
         ]);
     }
@@ -37,7 +37,7 @@ class RepuestoController extends AbstractController
             return $this->redirectToRoute('repuestos_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('repuestos/new.html.twig');
+        return $this->render('repuestos/add_repuestos.html.twig');
     }
 
     #[Route('/{id}', name: 'repuestos_show', methods: ['GET'])]

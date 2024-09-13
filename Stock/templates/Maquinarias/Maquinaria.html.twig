@@ -1,9 +1,7 @@
-{# templates/maquinaria/index.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Listado de Maquinarias{% endblock %}
-
+{% block stylesheets %}<link href="{{ asset('styles/maquinarias.css') }}" rel="stylesheet">{% endblock %}
 {% block body %}
     <div class="container mt-5">
         <h1 class="text-center">Listado de Maquinarias</h1>
@@ -14,44 +12,38 @@
                 <h4>Agregar nueva maquinaria</h4>
             </div>
             <div class="card-body">
-                <form action="{{ path('maquinaria_new') }}" method="post" class="form-inline">
-                    <div class="form-group mx-sm-3 mb-2">
-                        <label for="cantidad" class="sr-only">Cantidad</label>
+                <form action="{{ path('maquinaria_new') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre de la maquinaria" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="marca">Marca</label>
+                        <input type="text" name="marca" id="marca" class="form-control" placeholder="Marca de la maquinaria" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea name="descripcion" id="descripcion" class="form-control" placeholder="Descripción de la maquinaria" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
                         <input type="number" name="cantidad" id="cantidad" class="form-control" placeholder="Cantidad" required>
                     </div>
-                    <button type="submit" class="btn btn-primary mb-2">Agregar Maquinaria</button>
+                    <div class="form-group">
+                        <label for="años_uso">Años de uso</label>
+                        <input type="number" name="años_uso" id="años_uso" class="form-control" placeholder="Años de uso" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ultimo_service">Último service</label>
+                        <input type="date" name="ultimo_service" id="ultimo_service" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imagen">Imagen</label>
+                        <input type="file" name="imagen" id="imagen" class="form-control-file" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Agregar Maquinaria</button>
                 </form>
             </div>
         </div>
-
-        <!-- Tabla de maquinarias -->
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Cantidad</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for maquinaria in maquinarias %}
-                    <tr>
-                        <td>{{ maquinaria.id }}</td>
-                        <td>{{ maquinaria.cantidad }}</td>
-                        <td>
-                            <a href="{{ path('maquinaria_edit', {'id': maquinaria.id}) }}" class="btn btn-warning btn-sm">Editar</a>
-                            <form action="{{ path('maquinaria_delete', {'id': maquinaria.id}) }}" method="post" style="display:inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maquinaria.id) }}">
-                                <button class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta maquinaria?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center">No se encontraron maquinarias</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}
