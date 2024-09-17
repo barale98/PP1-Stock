@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Agregar Repuesto{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('styles/add_repuestos.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="page-title">Agregar Repuesto</h1>
+
+        {# Mostrar los mensajes flash de éxito o error #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="form-container">
+            <form method="POST" action="{{ path('repuestos_create') }}">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" id="cantidad" name="cantidad" required min="0">
+                </div>
+                <button type="submit" class="btn-submit">Agregar Repuesto</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+    

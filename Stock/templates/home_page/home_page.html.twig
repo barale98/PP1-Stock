@@ -1,18 +1,29 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Página de Inicio{% endblock %}
-{% block stylesheets %}<link href="{{ asset('styles/home_page.css') }}" rel="stylesheet">{% endblock %}
-{% block body %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('styles/home_page.css') }}" rel="stylesheet">
+{% endblock %}
 
-    <div style="background-color: #5bc0de; padding: 20px; color: white;">
+{% block body %}
+    <header class="home-header">
         <h1>Bienvenido a la Página de Inicio</h1>
-        <ul style="list-style-type: none; padding: 0;">
-            <li><a href="{{ path('app_view_stock') }}" style="color: white;">Visualizar Stock</a></li>
-            <li><a href="{{ path('app_view_catalog') }}" style="color: white;">Visualizar Catálogo</a></li>
-            <li><a href="{{ path('app_view_recipe') }}" style="color: white;">Visualizar Receta</a></li>
-            <li><a href="{{ path('app_logout') }}" style="color: white;">Cerrar Sesión</a></li>
-            <li><a href="{{ path('maquinaria_new') }}" style="color: white;">Agregar Maquinaria</a></li>
-            <li><a href="{{ path('repuestos_new') }}" style="color: white;">Agregar Repuestos</a></li>
-        </ul>
+    </header>
+    <div class="home-container">
+        <div class="content-wrapper">
+            <nav class="home-nav">
+                <ul>
+                    <li><a href="{{ path('app_view_stock') }}">Visualizar Stock</a></li>
+                    <li><a href="{{ path('app_view_catalog') }}">Visualizar Catálogo</a></li>
+                    <li><a href="{{ path('app_view_recipe') }}">Visualizar Receta</a></li>
+                    <li><a href="{{ path('maquinaria_new') }}">Agregar Maquinaria</a></li>
+                    <li><a href="{{ path('repuestos_index') }}">Agregar Repuestos</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="logout-container">
+            <a href="{{ path('app_logout') }}" class="logout-btn">Cerrar Sesión</a>
+        </div>
     </div>
 {% endblock %}

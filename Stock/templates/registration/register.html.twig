@@ -4,7 +4,7 @@
 {% block stylesheets %}<link href="{{ asset('styles/register.css') }}" rel="stylesheet">{% endblock %}
 {% block body %}
     <div class="auth-container">
-        <h1>Register</h1>
+        <h1>Registro</h1>
 
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert">{{ flash_error }}</div>
@@ -14,7 +14,7 @@
             {{ form_row(registrationForm.email) }}
             {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
             {{ form_row(registrationForm.agreeTerms) }}
-            <button type="submit">Register</button>
+            <button type="submit">Registro</button>
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}

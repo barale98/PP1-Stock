@@ -15,10 +15,10 @@ body {
 }
 
 .auth-container {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(66, 7, 7, 0.37);
     backdrop-filter: blur(10px);
     border-radius: 12px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 35px rgb(0, 0, 0);
     padding: 40px;
     max-width: 400px;
     width: 100%;
@@ -26,7 +26,7 @@ body {
 }
 
 h1 {
-    color: #333;
+    color: #ffffff;
     text-align: center;
     margin-bottom: 30px;
     font-size: 24px;
@@ -41,9 +41,13 @@ label {
     font-size: 14px;
 }
 
+.required{
+    color: rgb(255, 255, 255);
+}
 input[type="text"],
 input[type="email"],
 input[type="password"] {
+    color: rgb(255, 255, 255);
     width: 100%;
     padding: 14px;
     margin-bottom: 20px;

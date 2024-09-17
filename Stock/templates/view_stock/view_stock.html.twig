@@ -1,9 +1,82 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Ver Stock{% endblock %}
-{% block stylesheets %}<link href="{{ asset('styles/view_stock.css') }}" rel="stylesheet">{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('styles/view_stock.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function enableEditing(row) {
+            var cells = row.getElementsByTagName('td');
+            for (var i = 0; i < cells.length - 1; i++) {
+                var content = cells[i].innerHTML;
+                cells[i].innerHTML = '<input type="text" value="' + content + '">';
+            }
+            row.getElementsByClassName('edit-btn')[0].style.display = 'none';
+            row.getElementsByClassName('save-btn')[0].style.display = 'inline-block';
+        }
+
+        function saveChanges(id, form) {
+            var inputs = form.getElementsByTagName('input');
+            inputs[0].value = form.closest('tr').getElementsByTagName('input')[0].value;
+            inputs[1].value = form.closest('tr').getElementsByTagName('input')[1].value;
+            inputs[2].value = form.closest('tr').getElementsByTagName('input')[2].value;
+            form.submit();
+        }
+    </script>
+{% endblock %}
+
 {% block body %}
     <h1>Ver Stock</h1>
-    <p>Bienvenido al controlador: {{ controller_name }}</p>
-    {# Aquí puedes agregar el contenido específico para la vista de stock #}
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="stock-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for repuesto in repuestos %}
+                    <tr>
+                        <td>{{ repuesto.nombre }}</td>
+                        <td>{{ repuesto.cantidad }}</td>
+                        <td>{{ repuesto.descripcion }}</td>
+                        <td class="actions">
+                            <form method="post" action="{{ path('repuestos_edit', {id: repuesto.id}) }}" style="display:inline;">
+                                <input type="hidden" name="nombre" value="{{ repuesto.nombre }}">
+                                <input type="hidden" name="cantidad" value="{{ repuesto.cantidad }}">
+                                <input type="hidden" name="descripcion" value="{{ repuesto.descripcion }}">
+                                <button type="button" class="btn btn-secondary edit-btn" onclick="enableEditing(this.closest('tr'))">Editar</button>
+                                <button type="button" class="btn btn-primary save-btn" onclick="saveChanges({{ repuesto.id }}, this.closest('form'))" style="display:none;">Guardar</button>
+                            </form>
+                            <form method="post" action="{{ path('repuestos_delete', {id: repuesto.id}) }}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este repuesto?');" style="display:inline;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">No hay repuestos en stock.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('repuestos_index') }}" class="add-btn">Agregar Repuesto</a>
+    </div>
 {% endblock %}

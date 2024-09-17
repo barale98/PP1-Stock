@@ -1,48 +1,88 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Catálogo{% endblock %}
-{% block stylesheets %}<link href="{{ asset('styles/view_catalog.css') }}" rel="stylesheet">{% endblock %}
+
+{% block stylesheets %}<link href="{{ asset('styles/view_catalog.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function enableEditing(row) {
+            var cells = row.getElementsByTagName('td');
+            for (var i = 0; i < cells.length - 2; i++) {
+                if (i !== 4) { // Skip the image cell
+                    var content = cells[i].innerHTML;
+                    cells[i].innerHTML = '<input type="text" value="' + content + '">';
+                }
+            }
+            row.getElementsByClassName('edit-btn')[0].style.display = 'none';
+            row.getElementsByClassName('save-btn')[0].style.display = 'inline-block';
+        }
+
+        function saveChanges(id, form) {
+            var inputs = form.getElementsByTagName('input');
+            inputs[0].value = form.closest('tr').getElementsByTagName('input')[0].value;
+            inputs[1].value = form.closest('tr').getElementsByTagName('input')[1].value;
+            inputs[2].value = form.closest('tr').getElementsByTagName('input')[2].value;
+            inputs[3].value = form.closest('tr').getElementsByTagName('input')[3].value;
+            form.submit();
+        }
+    </script>
+{% endblock %}
+
 {% block body %}
-    <h1>Catálogo</h1>
-    
-    {% if maquinarias is empty %}
-        <p>No hay maquinarias registradas.</p>
-    {% else %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Marca</th>
-                    <th>Cantidad</th>
-                    <th>Descripción</th>
-                    <th>Imagen</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for maquinaria in maquinarias %}
-                    <tr>
-                        <td>{{ maquinaria.nombre }}</td>
-                        <td>{{ maquinaria.marca }}</td>
-                        <td>{{ maquinaria.cantidad }}</td>
-                        <td>{{ maquinaria.descripcion }}</td>
-                        <td>
-                            {% if maquinaria.imagen %}
-                                <img src="{{ asset('uploads/images/' ~ maquinaria.imagen) }}" alt="{{ maquinaria.nombre }}" width="100">
-                            {% else %}
-                                <p>No image available</p>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ path('maquinaria_edit', {'id': maquinaria.id}) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ path('maquinaria_delete', {'id': maquinaria.id}) }}" method="post" style="display: inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maquinaria.id) }}">
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar esta maquinaria?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+    <div class="catalog-container">
+        <h1 class="catalog-title">Catálogo de Maquinaria</h1>
+        
+        {% if maquinarias is empty %}
+            <p class="no-items">No hay maquinarias registradas.</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="catalog-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Cantidad</th>
+                            <th>Descripción</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for maquinaria in maquinarias %}
+                            <tr>
+                                <td>{{ maquinaria.nombre }}</td>
+                                <td>{{ maquinaria.marca }}</td>
+                                <td>{{ maquinaria.cantidad }}</td>
+                                <td>{{ maquinaria.descripcion }}</td>
+                                <td class="image-cell">
+                                    {% if maquinaria.imagen %}
+                                        <img src="{{ asset('uploads/images/' ~ maquinaria.imagen) }}" alt="{{ maquinaria.nombre }}" class="maquinaria-image">
+                                    {% else %}
+                                        <p class="no-image">No image available</p>
+                                    {% endif %}
+                                </td>
+                                <td class="actions-cell">
+                                    <form method="post" action="{{ path('maquinaria_edit', {'id': maquinaria.id}) }}" class="edit-form">
+                                        <input type="hidden" name="nombre" value="{{ maquinaria.nombre }}">
+                                        <input type="hidden" name="marca" value="{{ maquinaria.marca }}">
+                                        <input type="hidden" name="cantidad" value="{{ maquinaria.cantidad }}">
+                                        <input type="hidden" name="descripcion" value="{{ maquinaria.descripcion }}">
+                                        <button type="button" class="btn btn-primary edit-btn" onclick="enableEditing(this.closest('tr'))">Editar</button>
+                                        <button type="button" class="btn btn-success save-btn" onclick="saveChanges({{ maquinaria.id }}, this.closest('form'))" style="display:none;">Guardar</button>
+                                    </form>
+                                    <form action="{{ path('maquinaria_delete', {'id': maquinaria.id}) }}" method="post" class="delete-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maquinaria.id) }}">
+                                        <button type="submit" class="btn btn-danger delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta maquinaria?')">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

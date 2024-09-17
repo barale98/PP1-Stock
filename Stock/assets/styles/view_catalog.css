@@ -1,3 +1,137 @@
+/* Estilos generales */
 body {
-    background-color: skyblue;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.catalog-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.catalog-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+.no-items {
+    text-align: center;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+/* Estilos de la tabla */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.catalog-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.catalog-table th,
+.catalog-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.catalog-table th {
+    background-color: #3498db;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.catalog-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Estilos de las imágenes */
+.image-cell {
+    text-align: center;
+}
+
+.maquinaria-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.no-image {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* Estilos de los botones */
+.actions-cell {
+    white-space: nowrap;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.edit-form,
+.delete-form {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* Estilos para los inputs durante la edición */
+.catalog-table input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .catalog-table {
+        font-size: 14px;
+    }
+
+    .catalog-table th,
+    .catalog-table td {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
 }

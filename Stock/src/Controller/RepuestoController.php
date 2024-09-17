@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/repuestos')]
 class RepuestoController extends AbstractController
@@ -22,43 +21,66 @@ class RepuestoController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'repuestos_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'repuestos_new', methods: ['GET'])]
+    public function new(): Response
     {
-        if ($request->isMethod('POST')) {
-            $repuesto = new Repuestos();
-            $repuesto->setNombre($request->request->get('nombre'));
-            $repuesto->setDescripcion($request->request->get('descripcion'));
-            $repuesto->setCantidad((int) $request->request->get('cantidad'));
-
-            $entityManager->persist($repuesto);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('repuestos_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('repuestos/add_repuestos.html.twig');
+        return $this->render('repuestos/add_repuestos.html.twig');  
     }
 
-    #[Route('/{id}', name: 'repuestos_show', methods: ['GET'])]
-    public function show(Repuestos $repuesto): Response
+    #[Route('/create', name: 'repuestos_create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $nombre = $request->request->get('nombre');
+        $descripcion = $request->request->get('descripcion');
+        $cantidad = $request->request->get('cantidad');
+
+        // Validación de campos
+        if (empty($nombre) || empty($descripcion) || !is_numeric($cantidad) || $cantidad < 0) {
+            $this->addFlash('error', 'Todos los campos son obligatorios y la cantidad debe ser un número no negativo.');
+            return $this->redirectToRoute('repuestos_new');
+        }
+
+        // Crear y guardar el nuevo repuesto
+        $repuesto = new Repuestos();
+        $repuesto->setNombre($nombre);
+        $repuesto->setDescripcion($descripcion);
+        $repuesto->setCantidad((int)$cantidad);
+
+        $entityManager->persist($repuesto);
+        $entityManager->flush();
+
+        // Agregar el mensaje flash de éxito
+        $this->addFlash('success', 'Repuesto agregado correctamente.');
+
+        // Redirigir a la página principal de repuestos
+        return $this->redirectToRoute('repuestos_index');
+    }
+
+    #[Route('/{id<\d+>}', name: 'repuestos_show', methods: ['GET'])]
+    public function show(RepuestosRepository $repuestosRepository, int $id): Response
+    {
+        $repuesto = $repuestosRepository->find($id);
+
+        if (!$repuesto) {
+            throw $this->createNotFoundException('Repuesto no encontrado.');
+        }
+
         return $this->render('repuestos/show.html.twig', [
             'repuesto' => $repuesto,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'repuestos_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id<\d+>}/edit', name: 'repuestos_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Repuestos $repuesto, EntityManagerInterface $entityManager): Response
     {
         if ($request->isMethod('POST')) {
             $nombre = $request->request->get('nombre');
             $descripcion = $request->request->get('descripcion');
-            $cantidad = $request->request->get('cantidad');
+            $cantidad = (int)$request->request->get('cantidad');
 
             $repuesto->setNombre($nombre);
             $repuesto->setDescripcion($descripcion);
-            $repuesto->setCantidad((int)$cantidad);
+            $repuesto->setCantidad($cantidad);
 
             $entityManager->flush();
 
@@ -70,7 +92,7 @@ class RepuestoController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'repuestos_delete', methods: ['POST'])]
+    #[Route('/{id<\d+>}', name: 'repuestos_delete', methods: ['POST'])]
     public function delete(Request $request, Repuestos $repuesto, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$repuesto->getId(), $request->request->get('_token'))) {
@@ -79,38 +101,5 @@ class RepuestoController extends AbstractController
         }
 
         return $this->redirectToRoute('repuestos_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    #[Route('/update/{id}/{field}', name: 'repuestos_update', methods: ['POST'])]
-    public function update(Request $request, int $id, string $field, RepuestosRepository $repuestosRepository, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $repuesto = $repuestosRepository->find($id);
-        if (!$repuesto) {
-            return new JsonResponse(['success' => false, 'message' => 'Repuesto no encontrado.']);
-        }
-
-        $data = json_decode($request->getContent(), true);
-        $newValue = $data['value'] ?? null;
-
-        switch ($field) {
-            case 'nombre':
-                $repuesto->setNombre($newValue);
-                break;
-            case 'descripcion':
-                $repuesto->setDescripcion($newValue);
-                break;
-            case 'cantidad':
-                $repuesto->setCantidad((int) $newValue);
-                break;
-            default:
-                return new JsonResponse(['success' => false, 'message' => 'Campo no válido.']);
-        }
-
-        try {
-            $entityManager->flush();
-            return new JsonResponse(['success' => true]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['success' => false, 'message' => 'Error al guardar los cambios.']);
-        }
     }
 }

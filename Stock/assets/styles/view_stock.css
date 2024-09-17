@@ -1,3 +1,125 @@
+/* Estilos para centrar el encabezado y ajustar la tabla y botones */
 body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: skyblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+/* Contenedor para la tabla y el botón */
+.stock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-top: 25px;
+}
+
+/* Tabla de stock */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+    font-size: 16px;
+}
+
+table th {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+table tr {
+    transition: background-color 0.3s ease;
+}
+
+table tr:nth-child(even):hover, 
+table tr:nth-child(odd):hover {
+    background-color: #e9ecef;
+}
+
+/* Estilo específico para las celdas de acciones */
+table td.actions {
+    white-space: nowrap;
+}
+
+/* Botones de acción dentro de la tabla */
+.actions button {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.actions .btn-secondary {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.actions .btn-secondary:hover {
+    background-color: #218838;
+}
+
+.actions .btn-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.actions .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Ajuste para que los formularios de los botones estén en línea */
+.actions form {
+    display: inline-block;
+}
+
+/* Botón de "Agregar Repuesto" */
+.add-btn {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.add-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Mensaje de éxito */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    padding: 10px 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    width: 80%;
+    text-align: center;
 }

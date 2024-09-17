@@ -43,9 +43,9 @@ class Repuestos
         return $this->nombre;
     }
 
-    public function setNombre(string $nombre): static
+    public function setNombre(?string $nombre): static
     {
-        $this->nombre = $nombre;
+        $this->nombre = $nombre !== null ? $nombre : '';
 
         return $this;
     }
@@ -55,9 +55,9 @@ class Repuestos
         return $this->descripcion;
     }
 
-    public function setDescripcion(string $descripcion): static
+    public function setDescripcion(?string $descripcion): static
     {
-        $this->descripcion = $descripcion;
+        $this->descripcion = $descripcion !== null ? $descripcion : '';
 
         return $this;
     }
@@ -67,9 +67,9 @@ class Repuestos
         return $this->cantidad;
     }
 
-    public function setCantidad(int $cantidad): static
+    public function setCantidad(?int $cantidad): static
     {
-        $this->cantidad = $cantidad;
+        $this->cantidad = $cantidad !== null ? $cantidad : 0;
 
         return $this;
     }

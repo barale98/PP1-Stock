@@ -1,49 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listado de Maquinarias{% endblock %}
-{% block stylesheets %}<link href="{{ asset('styles/maquinarias.css') }}" rel="stylesheet">{% endblock %}
-{% block body %}
-    <div class="container mt-5">
-        <h1 class="text-center">Listado de Maquinarias</h1>
+{% block title %}Agregar Maquinaria{% endblock %}
+{% block stylesheets %}<link href="{{ asset('styles/maquinarias.css') }}" rel="stylesheet">
+{% endblock %}
 
-        <!-- Formulario para agregar nueva maquinaria -->
-        <div class="card my-4">
-            <div class="card-header">
-                <h4>Agregar nueva maquinaria</h4>
-            </div>
-            <div class="card-body">
-                <form action="{{ path('maquinaria_new') }}" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre de la maquinaria" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="marca">Marca</label>
-                        <input type="text" name="marca" id="marca" class="form-control" placeholder="Marca de la maquinaria" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="descripcion">Descripción</label>
-                        <textarea name="descripcion" id="descripcion" class="form-control" placeholder="Descripción de la maquinaria" required></textarea>
-                    </div>
-                    <div class="form-group">
+{% block body %}
+    <div class="container">
+        {# Agregar esta sección para mostrar los mensajes flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <h1 class="page-title">Agregar Maquinaria</h1>
+        <div class="form-container">
+            <form action="{{ path('maquinaria_new') }}" method="post" enctype="multipart/form-data">
+                {# El resto del formulario permanece igual #}
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <input type="text" id="marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half-width">
                         <label for="cantidad">Cantidad</label>
-                        <input type="number" name="cantidad" id="cantidad" class="form-control" placeholder="Cantidad" required>
+                        <input type="number" id="cantidad" name="cantidad" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group half-width">
                         <label for="años_uso">Años de uso</label>
-                        <input type="number" name="años_uso" id="años_uso" class="form-control" placeholder="Años de uso" required>
+                        <input type="number" id="años_uso" name="años_uso" required>
                     </div>
-                    <div class="form-group">
-                        <label for="ultimo_service">Último service</label>
-                        <input type="date" name="ultimo_service" id="ultimo_service" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="imagen">Imagen</label>
-                        <input type="file" name="imagen" id="imagen" class="form-control-file" accept="image/*">
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3">Agregar Maquinaria</button>
-                </form>
-            </div>
+                </div>
+                <div class="form-group">
+                    <label for="ultimo_service">Último service</label>
+                    <input type="date" id="ultimo_service" name="ultimo_service" required>
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen</label>
+                    <input type="file" id="imagen" name="imagen" accept="image/*">
+                </div>
+                <button type="submit" class="btn-submit">Agregar Maquinaria</button>
+            </form>
         </div>
     </div>
 {% endblock %}
