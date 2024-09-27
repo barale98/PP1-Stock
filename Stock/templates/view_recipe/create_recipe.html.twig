@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{% if receta is defined %}Editar Receta{% else %}Nueva Receta{% endif %}</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nombre) }}
+        {{ form_row(form.descripcion) }}
+
+        <h2>Seleccionar Maquinarias</h2>
+        <ul>
+            {% for maquinaria in maquinarias %}
+                <li>
+                    <input type="checkbox" name="maquinarias[]" value="{{ maquinaria.id }}" 
+                           {% if receta is defined and maquinaria in receta.maquinarias %}checked{% endif %}>
+                    {{ maquinaria.nombre }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Seleccionar Repuestos</h2>
+        <ul>
+            {% for repuesto in repuestos %}
+                <li>
+                    <input type="checkbox" name="repuestos[]" value="{{ repuesto.id }}" 
+                           {% if receta is defined and repuesto in receta.repuestos %}checked{% endif %}>
+                    {{ repuesto.nombre }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button type="submit">{{ button_label|default('Guardar') }}</button>
+    {{ form_end(form) }}
+{% endblock %}

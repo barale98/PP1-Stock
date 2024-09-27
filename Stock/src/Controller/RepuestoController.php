@@ -42,9 +42,11 @@ class RepuestoController extends AbstractController
 
         // Crear y guardar el nuevo repuesto
         $repuesto = new Repuestos();
-        $repuesto->setNombre($nombre);
-        $repuesto->setDescripcion($descripcion);
-        $repuesto->setCantidad((int)$cantidad);
+    $repuesto->setNombre($request->request->get('nombre'));
+    $repuesto->setDescripcion($request->request->get('descripcion'));
+    $repuesto->setCantidad((int) $request->request->get('cantidad'));
+    $repuesto->setStockMinimo((int) $request->request->get('stock_minimo'));  // Asegúrate de obtener este valor desde el formulario
+
 
         $entityManager->persist($repuesto);
         $entityManager->flush();

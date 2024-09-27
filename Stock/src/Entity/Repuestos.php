@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\RepuestosRepository;
@@ -24,6 +23,9 @@ class Repuestos
 
     #[ORM\Column]
     private ?int $cantidad = null;
+
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $stockMinimo = null;
 
     #[ORM\ManyToMany(targetEntity: Receta::class, inversedBy: 'repuestos')]
     private Collection $recetas;
@@ -72,6 +74,28 @@ class Repuestos
         $this->cantidad = $cantidad !== null ? $cantidad : 0;
 
         return $this;
+    }
+
+    public function getStockMinimo(): ?int
+    {
+    return $this->stockMinimo;
+    }
+
+    public function setStockMinimo(int $stockMinimo): static
+    {
+    $this->stockMinimo = $stockMinimo;
+
+    return $this;
+    }   
+
+    public function esStockSuficiente(): bool
+    {
+        return $this->cantidad > 0;
+    }
+
+    public function necesitaReabastecimiento(): bool
+    {
+        return $this->cantidad <= $this->stockMinimo;
     }
 
     /**

@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Maquinaria;
 use App\Repository\MaquinariaRepository;
+use App\Repository\RepuestosRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/maquinaria')]
 class MaquinariaController extends AbstractController
@@ -27,10 +27,9 @@ class MaquinariaController extends AbstractController
     }
 
     #[Route('/new', name: 'maquinaria_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, MaquinariaRepository $maquinariaRepository, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, MaquinariaRepository $maquinariaRepository, RepuestosRepository $repuestosRepository, EntityManagerInterface $entityManager): Response
     {
-        if ($request->isMethod('POST')) {
-        // Procesar el formulario
+    if ($request->isMethod('POST')) {
         $maquinaria = new Maquinaria();
         $maquinaria->setNombre($request->request->get('nombre'));
         $maquinaria->setMarca($request->request->get('marca'));
@@ -50,6 +49,27 @@ class MaquinariaController extends AbstractController
             $maquinaria->setImagen($imagenFilename);
         }
 
+        // Validación de stock de repuestos
+        $repuestosMaquinaria = $maquinaria->getRecetas(); // Suponiendo que la maquinaria está asociada a repuestos a través de "Recetas"
+        $validacionFallida = false; // Bandera para impedir agregar maquinaria si no hay stock suficiente
+
+        foreach ($repuestosMaquinaria as $receta) {
+            foreach ($receta->getRepuestos() as $repuesto) {
+                if (!$repuesto->esStockSuficiente()) {
+                    $this->addFlash('danger', "No hay suficientes unidades de {$repuesto->getNombre()} en stock.");
+                    $validacionFallida = true;
+                } elseif ($repuesto->necesitaReabastecimiento()) {
+                    $this->addFlash('warning', "El stock de {$repuesto->getNombre()} es bajo. Considera reabastecer.");
+                }
+            }
+        }
+
+        // Si la validación de repuestos falló, no se guarda la maquinaria
+        if ($validacionFallida) {
+            return $this->redirectToRoute('maquinaria_new');
+        }
+
+        // Si todo está correcto, guardar la maquinaria
         $entityManager->persist($maquinaria);
         $entityManager->flush();
 
@@ -57,45 +77,31 @@ class MaquinariaController extends AbstractController
         return $this->redirectToRoute('maquinaria_index');
     }
 
-    // Obtener todas las maquinarias para pasarlas a la vista
-    $maquinarias = $maquinariaRepository->findAll();
-
-    // Renderizar la plantilla y pasar la variable maquinarias
+    // Renderizar el formulario si es GET o si la validación falló
     return $this->render('Maquinarias/Maquinaria.html.twig', [
-        'maquinarias' => $maquinarias,
+        'maquinarias' => $maquinariaRepository->findAll(),
     ]);
     }
 
-
+    
     #[Route('/{id}/delete', name: 'maquinaria_delete', methods: ['POST'])]
     public function delete(Request $request, Maquinaria $maquinaria, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$maquinaria->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $maquinaria->getId(), $request->request->get('_token'))) {
             $entityManager->remove($maquinaria);
             $entityManager->flush();
 
             $this->addFlash('success', 'La maquinaria ha sido eliminada con éxito.');
         }
 
-        return $this->redirectToRoute('app_view_catalog');
+        return $this->redirectToRoute('maquinaria_index');
     }
 
-    #[Route('/visualizar-stock', name: 'visualizar_stock', methods: ['GET'])]
-    public function visualizarStock(MaquinariaRepository $maquinariaRepository): Response
-    {
-        $maquinarias = $maquinariaRepository->findAll();
-        return $this->render('maquinaria/visualizar_stock.html.twig', [
-            'maquinarias' => $maquinarias,
-            'controller_name' => 'MaquinariaController',
-        ]);
-    }
-
-    #[Route('/maquinaria/{id}/edit', name: 'maquinaria_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'maquinaria_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Maquinaria $maquinaria, EntityManagerInterface $entityManager): Response
     {
         if ($request->isMethod('POST')) {
-            $cantidad = $request->request->get('cantidad');
-            $maquinaria->setCantidad((int) $cantidad);
+            $maquinaria->setCantidad((int) $request->request->get('cantidad'));
             $entityManager->flush();
 
             return $this->redirectToRoute('maquinaria_index');
