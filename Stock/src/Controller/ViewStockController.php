@@ -15,9 +15,18 @@ class ViewStockController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repuestos = $entityManager->getRepository(Repuestos::class)->findAll();
+        $repuestosBajoStock = [];
+
+        // Verificar los repuestos con 2 o menos en stock
+        foreach ($repuestos as $repuesto) {
+            if ($repuesto->getCantidad() <= 2) {
+                $repuestosBajoStock[] = $repuesto;
+            }
+        }
 
         return $this->render('view_stock/view_stock.html.twig', [
             'repuestos' => $repuestos,
+            'repuestosBajoStock' => $repuestosBajoStock, // Pasamos la lista de repuestos con bajo stock
         ]);
     }
 

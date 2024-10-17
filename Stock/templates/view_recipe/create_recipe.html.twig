@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{% if receta is defined %}Editar Receta{% else %}Nueva Receta{% endif %}</h1>
+    <h1>{{ form.vars.value.id ? 'Editar Receta' : 'Nueva Receta' }}</h1>
 
     {{ form_start(form) }}
         {{ form_row(form.nombre) }}
@@ -12,7 +12,7 @@
             {% for maquinaria in maquinarias %}
                 <li>
                     <input type="checkbox" name="maquinarias[]" value="{{ maquinaria.id }}" 
-                           {% if receta is defined and maquinaria in receta.maquinarias %}checked{% endif %}>
+                           {% if form.vars.value.maquinarias is defined and maquinaria in form.vars.value.maquinarias %}checked{% endif %}>
                     {{ maquinaria.nombre }}
                 </li>
             {% endfor %}
@@ -23,7 +23,7 @@
             {% for repuesto in repuestos %}
                 <li>
                     <input type="checkbox" name="repuestos[]" value="{{ repuesto.id }}" 
-                           {% if receta is defined and repuesto in receta.repuestos %}checked{% endif %}>
+                           {% if form.vars.value.repuestos is defined and repuesto in form.vars.value.repuestos %}checked{% endif %}>
                     {{ repuesto.nombre }}
                 </li>
             {% endfor %}
@@ -32,3 +32,4 @@
         <button type="submit">{{ button_label|default('Guardar') }}</button>
     {{ form_end(form) }}
 {% endblock %}
+

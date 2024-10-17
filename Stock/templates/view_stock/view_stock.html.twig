@@ -39,6 +39,12 @@
         </div>
     {% endfor %}
 
+    {% if repuestosBajoStock is not empty %}
+        <div class="alert alert-warning">
+            <strong>¡Atención!</strong> Algunos repuestos tienen baja cantidad (2 o menos en stock).
+        </div>
+    {% endif %}
+
     <div class="stock-container">
         <table>
             <thead>
@@ -53,7 +59,9 @@
                 {% for repuesto in repuestos %}
                     <tr>
                         <td>{{ repuesto.nombre }}</td>
-                        <td>{{ repuesto.cantidad }}</td>
+                        <td {% if repuesto.cantidad <= 2 %} style="color: red;" {% endif %}>
+                            {{ repuesto.cantidad }}
+                        </td>
                         <td>{{ repuesto.descripcion }}</td>
                         <td class="actions">
                             <form method="post" action="{{ path('repuestos_edit', {id: repuesto.id}) }}" style="display:inline;">
@@ -77,6 +85,6 @@
             </tbody>
         </table>
 
-        <a href="{{ path('repuestos_index') }}" class="add-btn">Agregar Repuesto</a>
+        <a href="{{ path('repuestos_new') }}" class="add-btn">Agregar Repuesto</a>
     </div>
 {% endblock %}

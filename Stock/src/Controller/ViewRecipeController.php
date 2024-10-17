@@ -19,10 +19,8 @@ class ViewRecipeController extends AbstractController
     #[Route('/', name: 'receta_index', methods: ['GET'])]
     public function index(RecetaRepository $recetaRepository): Response
     {
-        // Obtener todas las recetas de la base de datos
         $recetas = $recetaRepository->findAll();
 
-        // Renderizar la vista de recetas
         return $this->render('view_recipe/view_recipe.html.twig', [
             'recetas' => $recetas,
         ]);
@@ -41,7 +39,7 @@ class ViewRecipeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Obtener maquinarias seleccionadas desde el formulario
-            $maquinariasSeleccionadas = $request->request->get('maquinarias', []);
+            $maquinariasSeleccionadas = $request->request->all('maquinarias');
             foreach ($maquinariasSeleccionadas as $maquinariaId) {
                 $maquinaria = $maquinariaRepository->find($maquinariaId);
                 if ($maquinaria) {
@@ -50,15 +48,27 @@ class ViewRecipeController extends AbstractController
             }
 
             // Obtener repuestos seleccionados desde el formulario
-            $repuestosSeleccionados = $request->request->get('repuestos', []);
+            $repuestosSeleccionados = $request->request->all('repuestos');
             foreach ($repuestosSeleccionados as $repuestoId) {
                 $repuesto = $repuestosRepository->find($repuestoId);
                 if ($repuesto) {
-                    $receta->addRepuesto($repuesto);
+                    // Descontar la cantidad de repuestos utilizados
+                    if ($repuesto->getCantidad() > 0) {
+                        $repuesto->setCantidad($repuesto->getCantidad() - 1); // Ajustar según la cantidad utilizada
+                        $receta->addRepuesto($repuesto);
+
+                        // Verificar si el repuesto necesita reabastecimiento
+                        if ($repuesto->necesitaReabastecimiento()) {
+                            $this->addFlash('warning', 'El repuesto ' . $repuesto->getNombre() . ' necesita reabastecimiento.');
+                        }
+                    } else {
+                        $this->addFlash('danger', 'No hay suficiente stock del repuesto ' . $repuesto->getNombre() . '.');
+                        return $this->redirectToRoute('receta_new');
+                    }
                 }
             }
 
-            // Persistir y guardar la nueva receta
+            // Guardar la nueva receta
             $entityManager->persist($receta);
             $entityManager->flush();
 
@@ -85,9 +95,9 @@ class ViewRecipeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Actualizar maquinarias seleccionadas
-            $receta->getMaquinarias()->clear(); // Limpiar las maquinarias actuales
-            $maquinariasSeleccionadas = $request->request->get('maquinarias', []);
+            // Actualizar las maquinarias seleccionadas
+            $receta->getMaquinarias()->clear(); 
+            $maquinariasSeleccionadas = $request->request->all('maquinarias');
             foreach ($maquinariasSeleccionadas as $maquinariaId) {
                 $maquinaria = $maquinariaRepository->find($maquinariaId);
                 if ($maquinaria) {
@@ -95,13 +105,25 @@ class ViewRecipeController extends AbstractController
                 }
             }
 
-            // Actualizar repuestos seleccionados
-            $receta->getRepuestos()->clear(); // Limpiar los repuestos actuales
-            $repuestosSeleccionados = $request->request->get('repuestos', []);
+            // Actualizar los repuestos seleccionados
+            $receta->getRepuestos()->clear();
+            $repuestosSeleccionados = $request->request->all('repuestos');
             foreach ($repuestosSeleccionados as $repuestoId) {
                 $repuesto = $repuestosRepository->find($repuestoId);
                 if ($repuesto) {
-                    $receta->addRepuesto($repuesto);
+                    // Descontar cantidad de repuestos si es necesario
+                    if ($repuesto->getCantidad() > 0) {
+                        $repuesto->setCantidad($repuesto->getCantidad() - 1);
+                        $receta->addRepuesto($repuesto);
+
+                        // Verificar si necesita reabastecimiento
+                        if ($repuesto->necesitaReabastecimiento()) {
+                            $this->addFlash('warning', 'El repuesto ' . $repuesto->getNombre() . ' necesita reabastecimiento.');
+                        }
+                    } else {
+                        $this->addFlash('danger', 'No hay suficiente stock del repuesto ' . $repuesto->getNombre() . '.');
+                        return $this->redirectToRoute('receta_edit', ['id' => $receta->getId()]);
+                    }
                 }
             }
 
@@ -140,3 +162,4 @@ class ViewRecipeController extends AbstractController
         return $this->redirectToRoute('receta_index');
     }
 }
+

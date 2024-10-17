@@ -7,3 +7,9 @@ controllers:
 view-recipe: 
     path: /view-recipe
     controller: App\Controller\ViewRecipeController::index
+    
+
+maquinaria_edit:
+    path: /maquinaria/{id}/edit
+    controller: App\Controller\MaquinariaController::edit
+    methods: [GET, POST]

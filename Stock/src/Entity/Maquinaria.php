@@ -31,7 +31,7 @@ class Maquinaria
     private ?int $cantidad = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $añosUso = null; // Nuevo campo
+    private ?int $aniosUso = null; // Nuevo campo
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $ultimoService = null;
@@ -117,14 +117,14 @@ class Maquinaria
         return $this;
     }
 
-    public function getAñosUso(): ?int
+    public function getAniosUso(): ?int
     {
-        return $this->añosUso;
+        return $this->aniosUso;
     }
 
-    public function setAñosUso(?int $añosUso): self
+    public function setAniosUso(?int $aniosUso): self
     {
-        $this->añosUso = $añosUso;
+        $this->aniosUso = $aniosUso;
         return $this;
     }
 

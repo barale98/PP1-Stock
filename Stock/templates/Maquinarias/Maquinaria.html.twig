@@ -1,56 +1,53 @@
+{# templates/Maquinarias/maquinaria.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Agregar Maquinaria{% endblock %}
-{% block stylesheets %}<link href="{{ asset('styles/maquinarias.css') }}" rel="stylesheet">
-{% endblock %}
+{% block title %}Listado de Maquinarias{% endblock %}
 
 {% block body %}
-    <div class="container">
-        {# Agregar esta sección para mostrar los mensajes flash #}
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
+    <h1>Listado de Maquinarias</h1>
 
-        <h1 class="page-title">Agregar Maquinaria</h1>
-        <div class="form-container">
-            <form action="{{ path('maquinaria_new') }}" method="post" enctype="multipart/form-data">
-                {# El resto del formulario permanece igual #}
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="marca">Marca</label>
-                    <input type="text" id="marca" name="marca" required>
-                </div>
-                <div class="form-group">
-                    <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" required></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group half-width">
-                        <label for="cantidad">Cantidad</label>
-                        <input type="number" id="cantidad" name="cantidad" required>
-                    </div>
-                    <div class="form-group half-width">
-                        <label for="años_uso">Años de uso</label>
-                        <input type="number" id="años_uso" name="años_uso" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="ultimo_service">Último service</label>
-                    <input type="date" id="ultimo_service" name="ultimo_service" required>
-                </div>
-                <div class="form-group">
-                    <label for="imagen">Imagen</label>
-                    <input type="file" id="imagen" name="imagen" accept="image/*">
-                </div>
-                <button type="submit" class="btn-submit">Agregar Maquinaria</button>
-            </form>
-        </div>
-    </div>
+    {# Botón para agregar una nueva maquinaria #}
+    <a href="{{ path('maquinaria_new') }}" class="btn btn-primary mb-3">Agregar Nueva Maquinaria</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Años de Uso</th>
+                <th>Último Service</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for maquinaria in maquinarias %}
+                <tr>
+                    <td>{{ maquinaria.nombre }}</td>
+                    <td>{{ maquinaria.marca }}</td>
+                    <td>{{ maquinaria.descripcion }}</td>
+                    <td>{{ maquinaria.cantidad }}</td>
+                    <td>{{ maquinaria.aniosUso }}</td>
+                    <td>{{ maquinaria.ultimoService ? maquinaria.ultimoService|date('Y-m-d') : 'No registrado' }}</td>
+                    <td>
+                        <a href="{{ path('maquinaria_edit', {id: maquinaria.id}) }}" class="btn btn-warning">Editar</a> 
+
+
+                        {# Formulario de eliminación #}
+                        <form action="{{ path('maquinaria_delete', {id: maquinaria.id}) }}" method="post" style="display:inline-block;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta maquinaria?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maquinaria.id) }}">
+                            <button class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No hay maquinarias registradas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
