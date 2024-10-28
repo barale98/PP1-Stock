@@ -36,12 +36,18 @@ class MaquinariaController extends AbstractController
             // Subida de imagen
             $imagen = $form->get('imagen')->getData();
             if ($imagen) {
+                $uploadDir = $this->getParameter('images_directory');
+
+                // Crear el directorio si no existe
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
                 $imagenFilename = uniqid() . '.' . $imagen->guessExtension();
-                $imagen->move($this->getParameter('images_directory'), $imagenFilename);
+                $imagen->move($uploadDir, $imagenFilename);
                 $maquinaria->setImagen($imagenFilename);
             }
 
-            // Guardar maquinaria en la base de datos
             $entityManager->persist($maquinaria);
             $entityManager->flush();
 
@@ -67,20 +73,18 @@ public function edit(Request $request, Maquinaria $maquinaria, EntityManagerInte
         $maquinaria->setDescripcion($request->request->get('descripcion'));
         $maquinaria->setAñosUso($request->request->get('aniosUso'));
         $maquinaria->setCantidad($request->request->get('cantidad'));
-        
+
         // Guardar cambios
         $entityManager->flush();
         $this->addFlash('success', 'Maquinaria editada con éxito.');
         return $this->redirectToRoute('maquinaria_index');
     }
     
-
     return $this->render('Maquinarias/edit.html.twig', [
         'form' => $form->createView(),
         'maquinaria' => $maquinaria,
     ]);
 }
-
 
     // Eliminar maquinaria
     #[Route('/{id}/delete', name: 'maquinaria_delete', methods: ['POST'])]
