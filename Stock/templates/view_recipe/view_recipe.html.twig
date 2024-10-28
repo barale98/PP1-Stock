@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/view_recipe.css') }}">
+{% endblock %}
+
 {% block body %}
     <h1>Lista de Recetas</h1>
+    
+    <div class="create-button">
+        <a href="{{ path('receta_new') }}">Crear nueva receta</a>
+    </div>
+
     <table>
         <thead>
             <tr>
@@ -16,16 +25,15 @@
                     <td>{{ receta.nombre }}</td>
                     <td>{{ receta.descripcion }}</td>
                     <td>
-                        <a href="{{ path('receta_show', {'id': receta.id}) }}">Ver</a>
-                        <a href="{{ path('receta_edit', {'id': receta.id}) }}">Editar</a>
-                        <form method="post" action="{{ path('receta_delete', {'id': receta.id}) }}" onsubmit="return confirm('¿Estás seguro?');">
+                        <a href="{{ path('receta_show', {'id': receta.id}) }}" class="action-button view-button">Ver</a>
+                        <a href="{{ path('receta_edit', {'id': receta.id}) }}" class="action-button edit-button">Editar</a>
+                        <form method="post" action="{{ path('receta_delete', {'id': receta.id}) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro?');">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ receta.id) }}">
-                            <button type="submit">Eliminar</button>
+                            <button type="submit" class="action-button delete-button">Eliminar</button>
                         </form>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('receta_new') }}">Crear nueva receta</a>
 {% endblock %}

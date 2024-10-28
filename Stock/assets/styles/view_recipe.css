@@ -1,3 +1,91 @@
-body {
-    background-color: skyblue;
+/* Estilos para el título */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+/* Botón para crear nueva receta */
+.create-button {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.create-button a {
+    background-color: #600a81;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s;
+}
+
+.create-button a:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos para la tabla */
+table {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    box-shadow: 0px 6px 12px rgba(0,0,0,0.1);
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead tr {
+    background-color: #1a4dac;
+    color: white;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+thead th {
+    text-align: left;
+}
+
+tbody tr {
+    transition: background-color 0.5s;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f4f8fb;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+/* Estilos para los botones de acciones */
+.action-button {
+    color: white;
+    padding: 6px 12px;
+    margin-right: 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-button {
+    background-color: #007bff;
+}
+
+.edit-button {
+    background-color: #ffc107;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    border: none;
+    cursor: pointer;
 }
